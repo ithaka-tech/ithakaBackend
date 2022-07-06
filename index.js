@@ -6,7 +6,7 @@ const customersAPI = require('./Routes/customers');
 const clientsAPI = require('./Routes/clients');
 const loginAPI = require('./Routes/logins');
 const sessionAPI = require('./Routes/sessions');
-const emailsAPI = require('./Routes/emails')
+//const emailsAPI = require('./Routes/emails');
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.use('/api/customers', customersAPI);
 app.use('/api/clients', clientsAPI);
 app.use('/api/logins', loginAPI);
 app.use('/api/sessions', sessionAPI);
-app.use('/api/emails', emailsAPI);
+//app.use('/api/emails', emailsAPI);
 
 //this is where we start listening for shtuff to happen
 const port = process.env.PORT || 3000;
