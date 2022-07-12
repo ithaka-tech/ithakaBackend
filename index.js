@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const express = require('express');
 const helmet = require('helmet');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const swaggerUI = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
@@ -19,6 +20,7 @@ mongoose.connect('mongodb://localhost/ithaka')
     .catch(err => console.error('could not connect to ithaka db'));
 
 //request response pipeline
+app.use(cors({origin: 'http://localhost:3001'})); //ONLY FOR TESTING LOCALLY
 app.use(express.json());
 app.use(helmet());
 app.use('/api/customers', customersAPI);
