@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
         password: String(crypto.createHash('sha256', process.env.SECRET).update(req.body.password).digest('hex'))
     }).exec();
 
-    if(exists.length > 0) return res.status(404).send('client already exists');
+    if(exists.length > 0) return res.status(400).send('client already exists');
 
     //save the new client if valid and return the info with the unhashed password back
     const newClient = new ClientSchema(req.body);

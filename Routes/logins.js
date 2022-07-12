@@ -15,8 +15,8 @@ router.post('/', async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     const loginAuth = await ClientSchema.find({ 
-        client_email: req.body.client_email, 
-        client_password: String(crypto.createHash('sha256', process.env.SECRET).update(req.body.password).digest('hex')) 
+        email: req.body.email, 
+        password: await String(crypto.createHash('sha256', process.env.SECRET).update(req.body.password).digest('hex')) 
     }).exec();
     if(loginAuth.length === 0) return res.status(400).send('bad username or password');
 
