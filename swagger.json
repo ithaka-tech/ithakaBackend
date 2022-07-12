@@ -102,10 +102,7 @@
             "content": {
               "json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CustomerResponse"
-                  }
+                  "$ref": "#/components/schemas/CustomerArrayResponse"
                 }
               }
             }
@@ -187,7 +184,7 @@
         "requestBody": {
           "description": "Added Customer",
           "content": {
-            "application/json": {
+            "json": {
               "schema": {
                 "$ref": "#/components/schemas/CustomerSchema"
               }
@@ -257,7 +254,7 @@
           "200": {
             "description": "deleting a valid customer",
             "content": {
-              "application/json": {
+              "json": {
                 "schema": {
                   "$ref": "#/components/schemas/CustomerResponse"
                 }
@@ -329,7 +326,7 @@
           "200": {
             "description": "valid login",
             "content": {
-              "application/json": {
+              "json": {
                 "schema": {
                   "$ref": "#/components/schemas/LoginResponse"
                 }
@@ -488,6 +485,51 @@
               "name": "Billy Bob",
               "email": "billybob@gmail.com"
             }
+          }
+        }
+      },
+      "CustomerArrayResponse": {
+        "required": [
+          "customers",
+          "sessionID"
+        ],
+        "type": "object",
+        "properties": {
+          "customer": {
+            "type": "array",
+            "example": [
+              {
+                "_id": "89asd89a98a9",
+                "clientId": "12f1fafaf12",
+                "name": "Billy Bob",
+                "email": "billybob@gmail.com",
+                "address": "643 Biscuit Ave, Apt. 12, Pittsburgh, PA, USA, 16510",
+                "phoneNumber": "8233238900",
+                "paymentMode": "Cash on Delivery"
+              },
+              {
+                "_id": "89asd89a98a9",
+                "clientId": "12f1fafaf12",
+                "name": "Billy Bob",
+                "email": "billybob@gmail.com",
+                "address": "643 Biscuit Ave, Apt. 12, Pittsburgh, PA, USA, 16510",
+                "phoneNumber": "8233238900",
+                "paymentMode": "Cash on Delivery"
+              },
+              {
+                "_id": "89asd89a98a9",
+                "clientId": "12f1fafaf12",
+                "name": "Billy Bob",
+                "email": "billybob@gmail.com",
+                "address": "643 Biscuit Ave, Apt. 12, Pittsburgh, PA, USA, 16510",
+                "phoneNumber": "8233238900",
+                "paymentMode": "Cash on Delivery"
+              }
+            ]
+          },
+          "sessionId": {
+            "type": "string",
+            "example": "45ea4f5672f"
           }
         }
       }
