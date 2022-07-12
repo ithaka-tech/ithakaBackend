@@ -35,6 +35,20 @@ function validateCustomerPostBody(customer){
     return customerSchema.validate(customer);
 }
 
+function validateCustomerPutBody(customer){
+    const customerSchema = Joi.object({
+        clientId: Joi.string().length(24).alphanum(),
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
+        address: Joi.string().required(),
+        phoneNumber: Joi.string().required(),
+        paymentMode: Joi.string().valid('Bank Transfer', 'Cash on Delivery').required(),
+    });
+
+    return customerSchema.validate(customer);
+}
+
 module.exports.CustomerSchema = CustomerSchema;
 module.exports.validateCustomerParams = validateCustomerParams;
 module.exports.validateCustomerPostBody = validateCustomerPostBody;
+module.exports.validateCustomerPutBody = validateCustomerPutBody;

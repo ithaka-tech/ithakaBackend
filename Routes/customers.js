@@ -1,5 +1,5 @@
 const express = require('express');
-const { CustomerSchema, validateCustomerParams, validateCustomerPostBody } = require('../DBModels/customer');
+const { CustomerSchema, validateCustomerParams, validateCustomerPostBody, validateCustomerPutBody } = require('../DBModels/customer');
 const { validateSessionID } = require('../DBModels/session');
 
 const router = express.Router();
@@ -70,11 +70,11 @@ router.post('/:sessionID', async (req, res) => {
     if(!activeSession) return res.status(401).send('Unauthorized Request');
 
     //creating the new entry
-    const newEntry = new CustomerSchema(req.body, );
+    const newEntry = new CustomerSchema(req.body);
     await newEntry.save();
 
     return res.send({
-        newEntry: newEntry,
+        customer: newEntry,
         sessionId: req.params.sessionID
     });
 });
@@ -90,7 +90,7 @@ router.put('/:sessionID/:clientID/:customerID', async (req, res) => {
     if(parErr.error) return res.status(400).send(parErr.error.details[0].message);
 
     //checks if the body of the request is correct
-    const bodErr = validateCustomerPostBody(req.body);
+    const bodErr = validateCustomerPutBody(req.body);
     if(bodErr.error) return res.status(400).send(bodErr.error.details[0].message);
     
     //checks if the session ID is active
@@ -116,7 +116,7 @@ router.put('/:sessionID/:clientID/:customerID', async (req, res) => {
 
     return res.send({
         customer: customers,
-        session_ID: req.body.session_ID
+        sessionId: req.body.session_ID
     });
 });
 
