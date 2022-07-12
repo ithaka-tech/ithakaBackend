@@ -39,7 +39,7 @@
         "requestBody": {
           "description": "info of the added client",
           "content": {
-            "application/json": {
+            "json": {
               "schema": {
                 "$ref": "#/components/schemas/ClientBody"
               }
@@ -50,7 +50,7 @@
           "200": {
             "description": "valid addition",
             "content": {
-              "applications/json": {
+              "json": {
                 "schema": {
                   "$ref": "#/components/schemas/ClientResponse"
                 }
@@ -75,8 +75,8 @@
         "parameters": [
           {
             "name": "sessionID",
-            "in": "query",
-            "description": "a sessionID in order to check if it is a valid session",
+            "in": "route parameter",
+            "description": "a session token in order to check if it is a valid session",
             "required": true,
             "style": "form",
             "explode": true,
@@ -86,7 +86,7 @@
           },
           {
             "name": "clientID",
-            "in": "query",
+            "in": "route parameter",
             "description": "a valid clientID which is created upon a new entry to the database",
             "required": true,
             "style": "form",
@@ -98,9 +98,9 @@
         ],
         "responses": {
           "200": {
-            "description": "search results matching criteria",
+            "description": "list of all customers that pertain to a certain customer - note pagination is not currently supported",
             "content": {
-              "application/json": {
+              "json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -111,7 +111,7 @@
             }
           },
           "400": {
-            "description": "bad input parameter"
+            "description": "bad input parameter format somewhere"
           },
           "401": {
             "description": "unauthorized request"
@@ -128,8 +128,8 @@
         "parameters": [
           {
             "name": "sessionID",
-            "in": "query",
-            "description": "a sessionID in order to check if it is a valid session",
+            "in": "route parameter",
+            "description": "a sessionID in order to check if the request is made during a valid session",
             "required": true,
             "style": "form",
             "explode": true,
@@ -139,8 +139,8 @@
           },
           {
             "name": "clientID",
-            "in": "query",
-            "description": "a valid clientID which is created upon a new entry to the database",
+            "in": "route parameter",
+            "description": "a valid clientID which is created upon a new entry to the clients collection in the database",
             "required": true,
             "style": "form",
             "explode": true,
@@ -150,8 +150,8 @@
           },
           {
             "name": "customerID",
-            "in": "query",
-            "description": "a valid clientID which is created upon a new entry to the database",
+            "in": "route parameter",
+            "description": "a valid customerID which is created upon a new entry to the customers collection in the database",
             "required": true,
             "style": "form",
             "explode": true,
@@ -162,9 +162,9 @@
         ],
         "responses": {
           "200": {
-            "description": "search results matching criteria",
+            "description": "customer entry matching the parameter requirements",
             "content": {
-              "application/json": {
+              "json": {
                 "schema": {
                   "$ref": "#/components/schemas/CustomerResponse"
                 }
@@ -196,7 +196,7 @@
         },
         "responses": {
           "200": {
-            "description": "valid update",
+            "description": "validly updated object and the current session token",
             "content": {
               "applications/json": {
                 "schema": {
@@ -221,7 +221,7 @@
         "parameters": [
           {
             "name": "sessionID",
-            "in": "query",
+            "in": "route parameter",
             "description": "a sessionID in order to check if it is a valid session",
             "required": true,
             "style": "form",
@@ -232,7 +232,7 @@
           },
           {
             "name": "clientID",
-            "in": "query",
+            "in": "route parameter",
             "description": "a valid clientID which is created upon a new entry to the database",
             "required": true,
             "style": "form",
@@ -243,8 +243,8 @@
           },
           {
             "name": "customerID",
-            "in": "query",
-            "description": "a valid clientID which is created upon a new entry to the database",
+            "in": "route parameter",
+            "description": "a valid customerID which is created upon a new entry to the database",
             "required": true,
             "style": "form",
             "explode": true,
@@ -279,11 +279,11 @@
           "customers"
         ],
         "summary": "adds a new customer",
-        "description": "Adds a customer to the database",
+        "description": "adds a customer to the database given a valid session token and valid inputs, should be used in customer onboarding form",
         "requestBody": {
           "description": "Customer to be added",
           "content": {
-            "application/json": {
+            "json": {
               "schema": {
                 "$ref": "#/components/schemas/CustomerSchema"
               }
@@ -292,9 +292,9 @@
         },
         "responses": {
           "200": {
-            "description": "valid addition",
+            "description": "the newly added customer entry",
             "content": {
-              "applications/json": {
+              "json": {
                 "schema": {
                   "$ref": "#/components/schemas/CustomerResponse"
                 }
@@ -315,10 +315,10 @@
         "tags": [
           "logins"
         ],
-        "summary": "Authenticates a client to use the webapp and gives a sessionId to go along with a valid login",
+        "summary": "Authenticates a client to use the webapp and gives a session token to go along with a valid login",
         "requestBody": {
           "content": {
-            "application/json": {
+            "json": {
               "schema": {
                 "$ref": "#/components/schemas/LoginBody"
               }
@@ -346,17 +346,24 @@
   "components": {
     "schemas": {
       "ClientResponse": {
-        "required": [
-          "client"
-        ],
+        "required": true,
         "type": "object",
         "properties": {
           "client": {
             "type": "object",
-            "example": {
-              "name": "Garden Lansdscaping LLC",
-              "email": "garden@landscaping.com",
-              "password": "billyBobsBurgers123"
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Garden Landscaping LLC"
+              },
+              "email": {
+               "type": "string",
+                "example": "garden@landscaping.com"
+              },
+              "password": {
+                "type":"string",
+                "example": "billyBobsBurgers123"
+              }
             }
           }
         }
@@ -386,7 +393,7 @@
       "CustomerSchema": {
         "required": [
           "address",
-          "clientID",
+          "clientId",
           "email",
           "name",
           "paymentMode",
