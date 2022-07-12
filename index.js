@@ -1,3 +1,4 @@
+require('dotenv').config()
 
 const express = require('express');
 const helmet = require('helmet');
@@ -17,7 +18,7 @@ mongoose.connect('mongodb://localhost/ithaka')
     .then(() => console.log('connected to ithaka db'))
     .catch(err => console.error('could not connect to ithaka db'));
 
-//request response pipeline is this
+//request response pipeline
 app.use(express.json());
 app.use(helmet());
 app.use('/api/customers', customersAPI);
@@ -27,9 +28,9 @@ app.use('/api/sessions', sessionAPI);
 //app.use('/api/emails', emailsAPI);
 
 
-//endpoint for dosumentation
+//endpoint for documentation
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
 //this is where we start listening for shtuff to happen
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 app.listen(port, () => console.log(`Listening on port ${port}`));
