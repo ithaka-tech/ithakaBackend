@@ -20,8 +20,8 @@ router.post('/', async (req, res) => {
     if(loginAuth.length === 0) return res.status(400).send('bad username or password');
 
     return res.send({
-        session_ID: await createNewSession(),
-        account_info: _.pick(loginAuth[0], ['client_name', 'client_email'])
+        sessionId: await createNewSession(),
+        accountInfo: _.pick(loginAuth[0], ['_id','name', 'email'])
     });
 });
 

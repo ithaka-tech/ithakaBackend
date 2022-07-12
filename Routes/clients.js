@@ -8,6 +8,23 @@ const secret = 'we are ithaka';
 
 //post for creation of new client i.e bussiness
 //JSON body of request is defined in validateNewClientBody() in ../DBModels/client.js
+/**
+ * body:
+ * {
+ *  client_name: 
+ *  client_email:
+ *  client_password:
+ * }
+ * 
+ * response:
+ * {
+ *  client: {
+    *  client_name: 
+    *  client_email:
+    *  client_password:
+ *  }
+ * }
+ */
 router.post('/', async (req, res) => {
     //validate schema
     const  { error } = validateNewClientBody(req.body);

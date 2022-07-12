@@ -2,6 +2,8 @@
 const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
+const swaggerUI = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 const customersAPI = require('./Routes/customers');
 const clientsAPI = require('./Routes/clients');
 const loginAPI = require('./Routes/logins');
@@ -10,7 +12,7 @@ const sessionAPI = require('./Routes/sessions');
 
 const app = express();
 
-//for testing purposes only
+//notifies that a valid connection to the database has been established
 mongoose.connect('mongodb://localhost/ithaka')
     .then(() => console.log('connected to ithaka db'))
     .catch(err => console.error('could not connect to ithaka db'));
@@ -23,6 +25,10 @@ app.use('/api/clients', clientsAPI);
 app.use('/api/logins', loginAPI);
 app.use('/api/sessions', sessionAPI);
 //app.use('/api/emails', emailsAPI);
+
+
+//endpoint for dosumentation
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
 //this is where we start listening for shtuff to happen
 const port = process.env.PORT || 3000;

@@ -104,7 +104,6 @@ router.put('/:sessionID/:clientID/:customerID', async (req, res) => {
     });
 
     if(customer) {
-        //customers.trackingId = req.body.trackingId;
         customers.email = req.body.email;
         customers.name = req.body.name; 
         customers.address = req.body.address;
@@ -116,7 +115,7 @@ router.put('/:sessionID/:clientID/:customerID', async (req, res) => {
     await customers.save();
 
     return res.send({
-        updatedEntry: customers,
+        customer: customers,
         session_ID: req.body.session_ID
     });
 });
@@ -144,7 +143,7 @@ router.delete('/:sessionID/:clientID/:customerID', async (req, res) => {
     }).exec();
 
     return res.send({
-        deletedEntry: deleted,
+        customer: deleted,
         sessionId: req.params.sessionID
     });  
 });

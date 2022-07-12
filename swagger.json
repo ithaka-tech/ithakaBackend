@@ -1,0 +1,489 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Ithaka Backend API",
+    "description": "documentation for the ithaka CRM backend api",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "to be decided"
+    }
+  ],
+  "tags": [
+    {
+      "name": "clients",
+      "description": "endpoint for managing clients"
+    },
+    {
+      "name": "customers",
+      "description": "endpoint for managing customers for a client"
+    },
+    {
+      "name": "logins",
+      "description": "endpoint for managing client authentication"
+    }
+  ],
+  "paths": {
+    "/api/clients": {
+      "post": {
+        "tags": [
+          "clients"
+        ],
+        "summary": "adds a new client acccount for the database",
+        "description": "adds a new client to the clients database, this api call should be used for bussiness account creation",
+        "requestBody": {
+          "description": "info of the added client",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "valid addition",
+            "content": {
+              "applications/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "404": {
+            "description": "client already exists"
+          }
+        }
+      }
+    },
+    "/api/customers/:sessionID/:clientID": {
+      "get": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "returns all customers for a specific client",
+        "parameters": [
+          {
+            "name": "sessionID",
+            "in": "query",
+            "description": "a sessionID in order to check if it is a valid session",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientID",
+            "in": "query",
+            "description": "a valid clientID which is created upon a new entry to the database",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          },
+          "401": {
+            "description": "unauthorized request"
+          }
+        }
+      }
+    },
+    "/api/customers/:sessionID/:clientID/:customerID": {
+      "get": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "returns a specific customer",
+        "parameters": [
+          {
+            "name": "sessionID",
+            "in": "query",
+            "description": "a sessionID in order to check if it is a valid session",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientID",
+            "in": "query",
+            "description": "a valid clientID which is created upon a new entry to the database",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerID",
+            "in": "query",
+            "description": "a valid clientID which is created upon a new entry to the database",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          },
+          "401": {
+            "description": "unauthorized request"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "updates a specific customer",
+        "requestBody": {
+          "description": "Added Customer",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "valid update",
+            "content": {
+              "applications/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "404": {
+            "description": "client already exists"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "deletes a specific customer",
+        "parameters": [
+          {
+            "name": "sessionID",
+            "in": "query",
+            "description": "a sessionID in order to check if it is a valid session",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientID",
+            "in": "query",
+            "description": "a valid clientID which is created upon a new entry to the database",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerID",
+            "in": "query",
+            "description": "a valid clientID which is created upon a new entry to the database",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "deleting a valid customer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          },
+          "401": {
+            "description": "unauthorized request"
+          }
+        }
+      }
+    },
+    "/api/customers/:sessionID": {
+      "post": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "adds a new customer",
+        "description": "Adds a customer to the database",
+        "requestBody": {
+          "description": "Customer to be added",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "valid addition",
+            "content": {
+              "applications/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "404": {
+            "description": "client already exists"
+          }
+        }
+      }
+    },
+    "/api/logins": {
+      "post": {
+        "tags": [
+          "logins"
+        ],
+        "summary": "Authenticates a client to use the webapp and gives a sessionId to go along with a valid login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "valid login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad username or password"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClientResponse": {
+        "required": [
+          "client"
+        ],
+        "type": "object",
+        "properties": {
+          "client": {
+            "type": "object",
+            "example": {
+              "name": "Garden Lansdscaping LLC",
+              "email": "garden@landscaping.com",
+              "password": "billyBobsBurgers123"
+            }
+          }
+        }
+      },
+      "ClientBody": {
+        "required": [
+          "client_email",
+          "client_name",
+          "client_password"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Garden Landscaping LLC"
+          },
+          "email": {
+            "type": "string",
+            "example": "garden@landscaping.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "billyBobsBurgers123"
+          }
+        }
+      },
+      "CustomerSchema": {
+        "required": [
+          "address",
+          "clientID",
+          "email",
+          "name",
+          "paymentMode",
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "example": "12fafd434k"
+          },
+          "name": {
+            "type": "string",
+            "example": "Billy Bob"
+          },
+          "email": {
+            "type": "string",
+            "example": "billybob@gmail.com"
+          },
+          "address": {
+            "type": "string",
+            "example": "643 Biscuit Ave, Apt. 12, Pittsburgh, PA, USA, 16510"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "8233238900"
+          },
+          "paymentMode": {
+            "type": "string",
+            "example": "Cash on Delivery"
+          }
+        },
+        "description": "Schema For a Customer Object"
+      },
+      "CustomerResponse": {
+        "required": [
+          "customer",
+          "sessionID"
+        ],
+        "type": "object",
+        "properties": {
+          "customer": {
+            "type": "object",
+            "example": {
+              "_id": "89asd89a98a9",
+              "clientId": "12f1fafaf12",
+              "name": "Billy Bob",
+              "email": "billybob@gmail.com",
+              "address": "643 Biscuit Ave, Apt. 12, Pittsburgh, PA, USA, 16510",
+              "phoneNumber": "8233238900",
+              "paymentMode": "Cash on Delivery"
+            }
+          },
+          "sessionId": {
+            "type": "string",
+            "example": "45ea4f5672f"
+          }
+        }
+      },
+      "LoginBody": {
+        "required": [
+          "clientEmail",
+          "clientPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "billybob@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "billyBobsBurgers123"
+          }
+        }
+      },
+      "LoginResponse": {
+        "required": [
+          "accountInfo",
+          "sessionId"
+        ],
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "example": "7862863876ff"
+          },
+          "accountInfo": {
+            "type": "object",
+            "example": {
+              "_id": "755768776afafa",
+              "name": "Billy Bob",
+              "email": "billybob@gmail.com"
+            }
+          }
+        }
+      }
+    }
+  }
+}
