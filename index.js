@@ -20,7 +20,7 @@ mongoose.connect('mongodb://localhost/ithaka')
     .catch(err => console.error('could not connect to ithaka db'));
 
 //request response pipeline
-app.use(cors({origin: 'http://localhost:3001'})); //ONLY FOR TESTING LOCALLY
+app.use(cors({origin: 'http://localhost:3000'})); //ONLY FOR TESTING LOCALLY
 app.use(express.json());
 app.use(helmet());
 app.use('/api/customers', customersAPI);
