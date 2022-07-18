@@ -1,35 +1,35 @@
+require('dotenv').config()
 const express = require('express');
 const { CustomerSchema, validateCustomerParams, validateCustomerPostBody, validateCustomerPutBody } = require('../DBModels/customer');
 const { validateSessionID } = require('../DBModels/session');
+const jws = require('jws');
 
 const router = express.Router();
 
 //gets list of all customers
-router.get('/:sessionID/:clientID', async(req, res) => {
+router.get('/:sessionID', async(req, res) => {
     //check if sessionID and clientID arguments are valid
     const { error } = validateCustomerParams({
-        sessionID: req.params.sessionID,
-        clientID: req.params.clientID
+        sessionID: req.params.sessionID
     });
-    if (error) return res.status(400).send(error.details[0].message)
+    if (error) return res.status(400).send(error.details[0].message);
 
     //checks if the session ID is active
-    const activeSession = await validateSessionID(req.params.sessionID);
+    const activeSession = jws.verify(req.params.sessionID, 'HS256', process.env.JWT_SECRET);
     if(!activeSession) return res.status(401).send('Unauthorized Request');
 
     //asynchronously gather all the customers and send
     const customers = await CustomerSchema.find({
-        clientId : req.params.clientID
+        clientId : jws.decode(req.params.sessionID).payload.clientId
     }).exec();
 
     return res.send({
-        customers: customers,
-        sessionId: req.params.sessionID
+        customers: customers
     });
 });
 
 //gets a single customer by customer ID 
-router.get('/:sessionID/:clientID/:customerID', async (req, res) => {
+router.get('/:sessionID/:customerID', async (req, res) => {
     //check if sessionID and clientID arguments are valid
     const { error } = validateCustomerParams({
         sessionID: req.params.sessionID,
@@ -39,12 +39,12 @@ router.get('/:sessionID/:clientID/:customerID', async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     //checks if the session ID is active
-    const activeSession = validateSessionID(req.param.sessionID);
+    const activeSession = jws.verify(req.params.sessionID, 'HS256', process.env.JWT_SECRET);
     if(!activeSession) return res.status(401).send('Unauthorized Request');
 
     //asynchronously gather all the customers and send
     const customers = await CustomerSchema.findOne({
-        clientID: req.params.clientID,
+        clientID: jws.decode(req.params.sessionID).payload.clientId,
         customerID: req.params.customerID
     }).exec();
 
@@ -66,25 +66,24 @@ router.post('/:sessionID', async (req, res) => {
     if(bodErr.error) return res.status(400).send(bodErr.error.details[0].message);
 
     //checks if the session ID is active
-    const activeSession = validateSessionID(req.params.sessionID);
+    const activeSession = jws.verify(req.params.sessionID, 'HS256', process.env.JWT_SECRET);
     if(!activeSession) return res.status(401).send('Unauthorized Request');
 
     //creating the new entry
+    req.body.clientId = jws.decode(req.params.sessionID).payload.clientId;
     const newEntry = new CustomerSchema(req.body);
     await newEntry.save();
 
     return res.send({
         customer: newEntry,
-        sessionId: req.params.sessionID
     });
 });
 
 //updates a new customer
-router.put('/:sessionID/:clientID/:customerID', async (req, res) => {
+router.put('/:sessionID/:customerID', async (req, res) => {
     //checks if the parameters of the request is correct
     const parErr = validateCustomerParams({
         sessionID: req.params.sessionID,
-        clientID: req.params.clientID,
         customerID: req.params.customerID
     });
     if(parErr.error) return res.status(400).send(parErr.error.details[0].message);
@@ -94,12 +93,12 @@ router.put('/:sessionID/:clientID/:customerID', async (req, res) => {
     if(bodErr.error) return res.status(400).send(bodErr.error.details[0].message);
     
     //checks if the session ID is active
-    const activeSession = validateSessionID(req.params.sessionID);
+    const activeSession = jws.verify(req.params.sessionID, 'HS256', process.env.JWT_SECRET);
     if(!activeSession) return res.status(401).send('Unauthorized Request');
 
     //find the appropriate customer
     const customers = await CustomerSchema.findOne({
-        clientId: req.params.clientID,
+        clientId:jws.decode(req.params.sessionID).payload.clientId,
         _id: req.params.customerID
     });
 
@@ -115,23 +114,21 @@ router.put('/:sessionID/:clientID/:customerID', async (req, res) => {
     await customers.save();
 
     return res.send({
-        customer: customers,
-        sessionId: req.body.session_ID
+        customer: customers
     });
 });
 
 //deletes an existing customer
-router.delete('/:sessionID/:clientID/:customerID', async (req, res) => {
+router.delete('/:sessionID/:customerID', async (req, res) => {
     //checks if the parameters of the request is correct
     const parErr = validateCustomerParams({
         sessionID: req.params.sessionID,
-        clientID: req.params.clientID,
         customerID: req.params.customerID
     });
     if(parErr.error) return res.status(400).send(parErr.error.details[0].message);
     
     //checks if the session ID is active
-    const activeSession = validateSessionID(req.params.sessionID);
+    const activeSession = jws.verify(req.params.sessionID, 'HS256', process.env.JWT_SECRET);
     if(!activeSession) return res.status(401).send('Unauthorized Request');
     
     const exists = await CustomerSchema.findById(req.params.customerID).exec();
@@ -139,12 +136,11 @@ router.delete('/:sessionID/:clientID/:customerID', async (req, res) => {
 
     const deleted = await CustomerSchema.deleteOne({
         _id: req.params.customerID,
-        sessionId: req.params.sessionID
+        clientId: jws.decode(req.params.sessionID).payload.clientId
     }).exec();
 
     return res.send({
         customer: deleted,
-        sessionId: req.params.sessionID
     });  
 });
 

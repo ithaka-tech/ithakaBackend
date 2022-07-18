@@ -4,11 +4,51 @@ require('dotenv').config()
 
 const express = require('express');
 const router = express.Router();
-const aws = require('aws-sdk')
+const AWS = require('aws-sdk')
 
+//new function
+router.post('/signup', async (req, res) => {
+    // Set the region 
+    AWS.config.update({region: 'us-east-1'});
 
-router.get('/signup', async (req, res) => {
-    
+// Create sendEmail params 
+var params = {
+  Destination: { /* required */
+    ToAddresses: [
+      'likhithborela@gmail.com',
+      /* more items */
+    ]
+  },
+  Message: { /* required */
+    Body: { /* required */
+      Html: {
+       Charset: "UTF-8",
+       Data: "Welcome to blah blah lanscaping services, "
+      },
+      Text: {
+       Charset: "UTF-8",
+       Data: "idk"
+      }
+     },
+     Subject: {
+      Charset: 'UTF-8',
+      Data: 'Landscaping Job Request'
+     }
+    },
+  Source: 'mail@ithaka.tech', /* required */
+};
+
+// Create the promise and SES service object
+var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+// Handle promise's fulfilled/rejected states
+sendPromise.then(
+  function(data) {
+    console.log(data.MessageId);
+  }).catch(
+    function(err) {
+    console.error(err, err.stack);
+  });
 })
 
 

@@ -13,9 +13,11 @@ const CustomerSchema = mongoose.model('Customer', mongoose.Schema({
 
 
 function validateCustomerParams(paramArgObj){
+
+    const pattern = /^[A-Za-z0-9]+.[A-Za-z0-9]+.[A-Za-z0-9]+$/
+
     const customerSchema = Joi.object({
-        sessionID: Joi.string().length(24).alphanum().required(),
-        clientID: Joi.string().length(24).alphanum(),
+        sessionID: Joi.string().regex(pattern).required(),
         customerID: Joi.string().length(24).alphanum()
     });
 
@@ -24,7 +26,6 @@ function validateCustomerParams(paramArgObj){
 
 function validateCustomerPostBody(customer){
     const customerSchema = Joi.object({
-        clientId: Joi.string().length(24).alphanum(),
         name: Joi.string().required(),
         email: Joi.string().email().required(),
         address: Joi.string().required(),
@@ -37,7 +38,6 @@ function validateCustomerPostBody(customer){
 
 function validateCustomerPutBody(customer){
     const customerSchema = Joi.object({
-        clientId: Joi.string().length(24).alphanum(),
         name: Joi.string().required(),
         email: Joi.string().email().required(),
         address: Joi.string().required(),

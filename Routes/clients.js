@@ -31,9 +31,7 @@ router.post('/', async (req, res) => {
       
     //check if client already exists 
     const exists = await ClientSchema.find({
-        name: req.body.name,
-        email: req.body.email,
-        password: String(crypto.createHash('sha256', process.env.SECRET).update(req.body.password).digest('hex'))
+        email: req.body.email
     }).exec();
 
     if(exists.length > 0) return res.status(400).send('client already exists');

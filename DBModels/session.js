@@ -1,21 +1,39 @@
+require('dotenv').config()
+
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const jws = require('jws')
 
 const SessionSchema = mongoose.model('Sessions', mongoose.Schema({ }))
 
 function validateSessionBody(session){
+    const pattern = /^[A-Za-z0-9]+.[A-Za-z0-9]+.[A-Za-z0-9]+$/
 
     const schema = Joi.object({
-        sessionID: Joi.string().length(24).alphanum().required()
+        sessionID: Joi.string().regex(pattern).required()
     })
     
     return schema.validate(session);
 }
 
-async function createNewSession(){
-    const newSession = new SessionSchema({ });
-    await newSession.save();
-    return String(newSession.id);
+async function createNewSession(clientId, clientName, clientEmail){
+    // const newSession = new SessionSchema({ });
+    // await newSession.save();
+    // return String(newSession.id);
+
+    const jsonWebToken = await jws.sign({
+        header: {
+            alg: 'HS256'
+        },
+        payload: {
+            _id: clientId,
+            name: clientName,
+            email: clientEmail
+        },
+        secret: process.env.JWT_SECRET
+    })
+
+    return jsonWebToken
 }
 
 
