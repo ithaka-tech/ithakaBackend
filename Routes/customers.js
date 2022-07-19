@@ -1,7 +1,6 @@
 require('dotenv').config()
 const express = require('express');
 const { CustomerSchema, validateCustomerParams, validateCustomerPostBody, validateCustomerPutBody } = require('../DBModels/customer');
-const { validateSessionID } = require('../DBModels/session');
 const jws = require('jws');
 
 const router = express.Router();
@@ -20,7 +19,7 @@ router.get('/:sessionID', async(req, res) => {
 
     //asynchronously gather all the customers and send
     const customers = await CustomerSchema.find({
-        clientId : jws.decode(req.params.sessionID).payload.clientId
+        clientId : JSON.parse(jws.decode(req.params.sessionID).payload)._id
     }).exec();
 
     return res.send({
@@ -44,13 +43,12 @@ router.get('/:sessionID/:customerID', async (req, res) => {
 
     //asynchronously gather all the customers and send
     const customers = await CustomerSchema.findOne({
-        clientID: jws.decode(req.params.sessionID).payload.clientId,
+        clientID: JSON.parse(jws.decode(req.params.sessionID).payload)._id,
         customerID: req.params.customerID
     }).exec();
 
     return res.send({
-        customer: customers,
-        sessionId: req.params.sessionID
+        customer: customers
     });
 });
 
@@ -70,12 +68,17 @@ router.post('/:sessionID', async (req, res) => {
     if(!activeSession) return res.status(401).send('Unauthorized Request');
 
     //creating the new entry
-    req.body.clientId = jws.decode(req.params.sessionID).payload.clientId;
-    const newEntry = new CustomerSchema(req.body);
+    const newEntry = new CustomerSchema({
+        clientId: JSON.parse(jws.decode(req.params.sessionID).payload)._id,
+        email: req.body.email,
+        name: req.body.name,
+        address: req.body.address,
+        phoneNumber: req.body.phoneNumber,
+        paymentMode: req.body.paymentMode
+    });
     await newEntry.save();
-
     return res.send({
-        customer: newEntry,
+        customer: newEntry
     });
 });
 
@@ -98,7 +101,7 @@ router.put('/:sessionID/:customerID', async (req, res) => {
 
     //find the appropriate customer
     const customers = await CustomerSchema.findOne({
-        clientId:jws.decode(req.params.sessionID).payload.clientId,
+        clientId: JSON.parse(jws.decode(req.params.sessionID).payload)._id,
         _id: req.params.customerID
     });
 
@@ -108,7 +111,6 @@ router.put('/:sessionID/:customerID', async (req, res) => {
         customers.address = req.body.address;
         customers.phoneNumber = req.body.phoneNumber;
         customers.paymentMode = req.body.paymentMode;
-        customers.status = req.body.status;
     }
 
     await customers.save();
@@ -136,7 +138,7 @@ router.delete('/:sessionID/:customerID', async (req, res) => {
 
     const deleted = await CustomerSchema.deleteOne({
         _id: req.params.customerID,
-        clientId: jws.decode(req.params.sessionID).payload.clientId
+        clientId: JSON.parse(jws.decode(req.params.sessionID).payload)._id
     }).exec();
 
     return res.send({

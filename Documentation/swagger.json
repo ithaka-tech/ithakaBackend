@@ -66,7 +66,7 @@
         }
       }
     },
-    "/api/customers/:sessionID/:clientID": {
+    "/api/customers/:sessionID": {
       "get": {
         "tags": [
           "customers"
@@ -77,17 +77,6 @@
             "name": "sessionID",
             "in": "route parameter",
             "description": "a session token in order to check if it is a valid session",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "clientID",
-            "in": "route parameter",
-            "description": "a valid clientID which is created upon a new entry to the database",
             "required": true,
             "style": "form",
             "explode": true,
@@ -114,9 +103,44 @@
             "description": "unauthorized request"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "customers"
+        ],
+        "summary": "adds a new customer",
+        "description": "adds a customer to the database given a valid session token and valid inputs, should be used in customer onboarding form",
+        "requestBody": {
+          "description": "Customer to be added",
+          "content": {
+            "json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "the newly added customer entry",
+            "content": {
+              "json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          },
+          "404": {
+            "description": "client already exists"
+          }
+        }
       }
     },
-    "/api/customers/:sessionID/:clientID/:customerID": {
+    "/api/customers/:sessionID/:customerID": {
       "get": {
         "tags": [
           "customers"
@@ -127,17 +151,6 @@
             "name": "sessionID",
             "in": "route parameter",
             "description": "a sessionID in order to check if the request is made during a valid session",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "clientID",
-            "in": "route parameter",
-            "description": "a valid clientID which is created upon a new entry to the clients collection in the database",
             "required": true,
             "style": "form",
             "explode": true,
@@ -228,17 +241,6 @@
             }
           },
           {
-            "name": "clientID",
-            "in": "route parameter",
-            "description": "a valid clientID which is created upon a new entry to the database",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "customerID",
             "in": "route parameter",
             "description": "a valid customerID which is created upon a new entry to the database",
@@ -269,44 +271,7 @@
           }
         }
       }
-    },
-    "/api/customers/:sessionID": {
-      "post": {
-        "tags": [
-          "customers"
-        ],
-        "summary": "adds a new customer",
-        "description": "adds a customer to the database given a valid session token and valid inputs, should be used in customer onboarding form",
-        "requestBody": {
-          "description": "Customer to be added",
-          "content": {
-            "json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomerSchema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "the newly added customer entry",
-            "content": {
-              "json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CustomerResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "invalid input, object invalid"
-          },
-          "404": {
-            "description": "client already exists"
-          }
-        }
-      }
-    },
+    }, 
     "/api/logins": {
       "post": {
         "tags": [
@@ -390,7 +355,6 @@
       "CustomerSchema": {
         "required": [
           "address",
-          "clientId",
           "email",
           "name",
           "paymentMode",
@@ -398,10 +362,6 @@
         ],
         "type": "object",
         "properties": {
-          "clientId": {
-            "type": "string",
-            "example": "12fafd434k"
-          },
           "name": {
             "type": "string",
             "example": "Billy Bob"
@@ -427,8 +387,7 @@
       },
       "CustomerResponse": {
         "required": [
-          "customer",
-          "sessionID"
+          "customer"
         ],
         "type": "object",
         "properties": {
@@ -436,17 +395,12 @@
             "type": "object",
             "example": {
               "_id": "89asd89a98a9",
-              "clientId": "12f1fafaf12",
               "name": "Billy Bob",
               "email": "billybob@gmail.com",
               "address": "643 Biscuit Ave, Apt. 12, Pittsburgh, PA, USA, 16510",
               "phoneNumber": "8233238900",
               "paymentMode": "Cash on Delivery"
             }
-          },
-          "sessionId": {
-            "type": "string",
-            "example": "45ea4f5672f"
           }
         }
       },
@@ -469,29 +423,19 @@
       },
       "LoginResponse": {
         "required": [
-          "accountInfo",
           "sessionId"
         ],
         "type": "object",
         "properties": {
           "sessionId": {
             "type": "string",
-            "example": "7862863876ff"
-          },
-          "accountInfo": {
-            "type": "object",
-            "example": {
-              "_id": "755768776afafa",
-              "name": "Billy Bob",
-              "email": "billybob@gmail.com"
-            }
+            "example": "7862863876ff.478999xc99c9c9.iu987c87c79c79c"
           }
         }
       },
       "CustomerArrayResponse": {
         "required": [
-          "customers",
-          "sessionID"
+          "customers"
         ],
         "type": "object",
         "properties": {
@@ -526,10 +470,6 @@
                 "paymentMode": "Cash on Delivery"
               }
             ]
-          },
-          "sessionId": {
-            "type": "string",
-            "example": "45ea4f5672f"
           }
         }
       }
