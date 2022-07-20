@@ -32,7 +32,6 @@ router.get('/:sessionID/:customerID', async (req, res) => {
     //check if sessionID and clientID arguments are valid
     const { error } = validateCustomerParams({
         sessionID: req.params.sessionID,
-        clientID: req.params.clientID,
         customerID: req.params.customerID
     });
     if (error) return res.status(400).send(error.details[0].message);
@@ -43,8 +42,8 @@ router.get('/:sessionID/:customerID', async (req, res) => {
 
     //asynchronously gather all the customers and send
     const customers = await CustomerSchema.findOne({
-        clientID: JSON.parse(jws.decode(req.params.sessionID).payload)._id,
-        customerID: req.params.customerID
+        clientId: JSON.parse(jws.decode(req.params.sessionID).payload)._id,
+        _id: req.params.customerID
     }).exec();
 
     return res.send({
@@ -105,7 +104,7 @@ router.put('/:sessionID/:customerID', async (req, res) => {
         _id: req.params.customerID
     });
 
-    if(customer) {
+    if(customers) {
         customers.email = req.body.email;
         customers.name = req.body.name; 
         customers.address = req.body.address;
