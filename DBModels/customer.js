@@ -14,7 +14,7 @@ const CustomerSchema = mongoose.model('Customer', mongoose.Schema({
 
 function validateCustomerParams(paramArgObj){
 
-    const pattern = /^[A-Za-z0-9]+.[A-Za-z0-9]+.[A-Za-z0-9]+$/
+    const pattern = /^[A-Za-z0-9-_]+.[A-Za-z0-9-_]+.[A-Za-z0-9-_]+$/
 
     const customerSchema = Joi.object({
         sessionID: Joi.string().regex(pattern).required(),
