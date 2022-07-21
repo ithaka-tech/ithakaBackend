@@ -58,6 +58,10 @@ router.post('/:sessionID', async (req, res) => {
     const parErr = validateCustomerParams({ sessionID: req.params.sessionID });
     if(parErr.error) return res.status(400).send(parErr.error.details[0].message);
 
+    if (req.body.address2 === "") {
+        req.body.address2 = " ";
+    }
+
     //checks if the body of the request is correct
     const bodErr = validateCustomerPostBody(req.body);
     if(bodErr.error) return res.status(400).send(bodErr.error.details[0].message);
@@ -72,6 +76,11 @@ router.post('/:sessionID', async (req, res) => {
         email: req.body.email,
         name: req.body.name,
         address: req.body.address,
+        address2: req.body.address2,
+        city: req.body.city,
+        state: req.body.state,
+        country: req.body.country,
+        zip: req.body.zip,
         phoneNumber: req.body.phoneNumber,
         paymentMode: req.body.paymentMode
     });
@@ -90,6 +99,10 @@ router.put('/:sessionID/:customerID', async (req, res) => {
     });
     if(parErr.error) return res.status(400).send(parErr.error.details[0].message);
 
+    if (req.body.address2 === "") {
+        req.body.address2 = " ";
+    }
+    
     //checks if the body of the request is correct
     const bodErr = validateCustomerPutBody(req.body);
     if(bodErr.error) return res.status(400).send(bodErr.error.details[0].message);
@@ -108,6 +121,11 @@ router.put('/:sessionID/:customerID', async (req, res) => {
         customers.email = req.body.email;
         customers.name = req.body.name; 
         customers.address = req.body.address;
+        customers.address2 = req.body.address2;
+        customers.city = req.body.city;
+        customers.state = req.body.state;
+        customers.country = req.body.country;
+        customers.zip = req.body.zip;
         customers.phoneNumber = req.body.phoneNumber;
         customers.paymentMode = req.body.paymentMode;
     }
