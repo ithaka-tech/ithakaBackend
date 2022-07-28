@@ -102,7 +102,7 @@ router.put('/:sessionID/:customerID', async (req, res) => {
     if (req.body.address2 === "") {
         req.body.address2 = " ";
     }
-    
+
     //checks if the body of the request is correct
     const bodErr = validateCustomerPutBody(req.body);
     if(bodErr.error) return res.status(400).send(bodErr.error.details[0].message);

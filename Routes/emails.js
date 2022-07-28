@@ -18,58 +18,50 @@ const sesv2 = new AWS.SESV2();
  * }
  */
 router.post('/signup', async (req, res) => {
-
-// Create sendEmail params 
-// var params = {
-//   Destination: { 
-//     ToAddresses: [
-//       'likhithborela@gmail.com',
-//     ],
-//   },
-//   Message: { /* required */
-//     Body: { /* required */
-//       Html: {
-//        Charset: "UTF-8",
-//        Data: "Welcome to blah blah lanscaping services, "
-//       },
-//       Text: {
-//        Charset: "UTF-8",
-//        Data: "idk",
-//       },
-//      },
-//      Subject: {
-//       Charset: 'UTF-8',
-//       Data: 'Landscaping Job Request'
-//      }
-//     },
-//   Source: 'mail@ithaka.tech', /* required */
-//   Tags: [
-//     {
-//       Name: 'STRING', /* required */
-//       Value: 'STRING' /* required */
-//     },
-//     /* more items */
-//   ]
-// };
-
-// // Create the promise and SES service object
-// var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
-
-// // Handle promise's fulfilled/rejected states
-// sendPromise.then(
-//   function(data) {
-//     console.log(data.MessageId);
-//   }).catch(
-//     function(err) {
-//     console.error(err, err.stack);
-//   });
-
+  //Create sendEmail params 
   var params = {
-  };
-  sesv2.getAccount(params, function(err, data) {
-    if (err) console.log(err, err.stack); // an error occurred
-    else     console.log(data);           // successful response
-  });
+    Destination: { 
+      ToAddresses: [
+        'templetran23@gmail.com',
+      ],
+    },
+    Message: { /* required */ 
+      Body: { /* required */
+        Html: {
+        Charset: "UTF-8",
+        Data: "Temple, make me the template, or else i will spam you :)"
+        },
+        Text: {
+        Charset: "UTF-8",
+        Data: "idk",
+        },
+      },
+      Subject: {
+        Charset: 'UTF-8',
+        Data: 'Landscaping Job Request'
+      }
+      },
+    Source: 'mail@ithaka.tech', /* required */
+    Tags: [
+      {
+        Name: 'STRING', /* required */
+        Value: 'STRING' /* required */
+      },
+      /* more items */
+    ]
+  };  
+
+  //Create the promise and SES service object
+  var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+  //Handle promise's fulfilled/rejected states
+  sendPromise.then(
+    function(data) {
+      res.send(data.MessageId);
+    }).catch(
+      function(err) {
+      console.error(err, err.stack);
+    });
 
 })
 
