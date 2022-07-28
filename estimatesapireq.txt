@@ -1,0 +1,42 @@
+These are the enpoints i want to add for now - lemme know if you want anything fixed up:
+
+/api/estimates : FOR INTERACTING WITH ESTIMATES COLLECTIONS
+
+POST /:sessionID : for adding a new estimate
+GET /:sessionID : for getting all estimates related to a single client
+GET /:sessionID/:customerID : for getting all estimates related to a single customer 
+GET /:sessionID/:estimateID : for getting a single estimate pertaining according to its tracking ID
+PUT /:sessionID/:estimateID : for updating a single estimate
+
+/api/subscriptions : FOR INTERACTING SUBSCRIPTION MODELS
+
+GET /:sessiondID : gets all the types of service subscription options i.e. weekly, monthly, biweekly, seasonly, yearly, etc.
+POST /:sessionID : creates a new subscirption type
+PUT /:sessionID : updates an existing user created subscription type
+DEL /:sessionID : deletes an existing user created subscription type
+
+/api/divisions : FOR INTERACTING WITH TYPES OF DIVISIONS
+
+GET /:sessionID : gets the main job divisions i.e. projects, maintenance, snow and maybe more additions in the future 
+POST /:sessionID : adds a new job division
+PUT /:sessionID : updates an existing job division given its a user created category
+DEL /:sessionID : deletes an existing job division - can only be done to user created categories
+
+/api/jobs : FOR INTERACTING WITH SPECIFIC JOBS
+
+GET /:sessionID/:divisionID : gets the specific job types related to a job division so for snow it might be shoveling,
+plowing, ice-sculpting, etc.
+POST /:sessionID/:divisionID : adds a new user created job to a job division
+DEL /:sessionID/:jobID : deleted a user created job for a specific job division
+
+/api/subjobs: FOR INTERACTING WITH MONETARY SUBCOMPONENTS OF A JOB
+
+GET /materials/:sessionID : gets all material type subjobs
+GET /labor/:sessionID : gets all labor type subjobs
+GET /equipment/:sessionID : gets all equipment type subjobs
+POST /materials/:sessionID : creates a new material type subjob
+POST /labor/:sessionID : creates a new labor type subjob
+POST /equipment/:sessionID : creates a new equipment type subjob
+PUT /materials/:sessionID : updates a material type subjob
+PUT /labor/:sessionID : updates a labor type subjob
+PUT /equipment/:sessionID : updates a equipment type subjob
